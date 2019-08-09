@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="login_content">
-        <form>
+        <form @submit.prevent="login">
           <div :class="{on: loginWay}">
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
@@ -19,7 +19,7 @@
               </button>
             </section>
             <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码">
+              <input type="text" maxlength="8" placeholder="验证码" v-model="code">
             </section>
             <section class="login_hint">
               温馨提示：未注册硅谷外卖帐号的手机号，登录时将自动注册，且代表已同意
@@ -29,7 +29,7 @@
           <div :class="{on: !loginWay}">
             <section>
               <section class="login_message">
-                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
+                <input type="text" maxlength="11" placeholder="手机/邮箱/用户名" v-model="name">
               </section>
               <section class="login_verification">
                 <input type="password" maxlength="8" placeholder="密码" v-model="pwd" v-if="!showPwd">
@@ -40,7 +40,7 @@
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
                 <img class="get_verification" src="./images/captcha.svg" alt="captcha">
               </section>
             </section>
@@ -53,22 +53,32 @@
         <i class="iconfont icon-jiantou2"></i>
       </a>
     </div>
+    <AlertTip :alertText="alertText" v-show="showAlert" @closeTip="closeTip"/>
   </section>
 </template>
 
 <script>
+  import AlertTip from '../../components/AlertTip/AlertTip'
   export default {
     name: 'Login',
+    components: {AlertTip},
     data(){
       return{
         loginWay:true,//登录方式
-        phone:'',//手机号
         computeTime:0,//设置倒计时
-        showPwd:false,
-        pwd:'',
+        showPwd:false,//是否显示密码
+        phone:'',//手机号
+        code:'',//短信验证码
+        name:'',//用户名
+        pwd:'',//密码
+        captcha:'',//图片验证码
+        alertText: '',//提示信息
+        showAlert:false,//是否显示
       }
     },
     methods:{
+
+      //异步获取短信验证
       getCode(){
         //alert("----")
         if(this.computeTime<=0){
@@ -81,7 +91,41 @@
             }
           },1000)
         }
-      }
+      },
+      //异步登陆
+      alertShow(alertText){
+        this.showAlert=true
+        this.alertText=alertText
+      },
+      login(){
+
+        if(this.loginWay){//短信验证登录
+          const {rightPhone ,phone , code} =this
+          if (!rightPhone) {
+            //手机号不正确
+            this.alertShow('手机号不正确')
+          }else if (!/^\d{6}$/.test(code)) {
+            //验证码不正确
+            this.alertShow('验证码不正确')
+          }
+        }else {//用户名密码登录
+          const {name,pwd,captcha} =this
+          if (!name){
+            //用户名不正确
+            this.alertShow('用户名不正确')
+          } else if (!pwd){
+            //密码不正确
+            this.alertShow('密码不正确')
+          } else if (!captcha) {
+            //验证码不正确
+            this.alertShow('验证码不正确')
+          }
+        }
+      },
+      closeTip(){//关闭提示
+        this.showAlert=false
+        this.alertText=''
+      },
     },
     computed:{
       rightPhone(){
