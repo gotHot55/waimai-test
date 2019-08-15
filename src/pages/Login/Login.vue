@@ -116,9 +116,11 @@
           if (!rightPhone) {
             //手机号不正确
             this.alertShow('手机号不正确')
+            return
           }else if (!/^\d{6}$/.test(code)) {
             //验证码不正确
             this.alertShow('验证码不正确')
+            return
           }
           //发送ajax请求短信
           result=await reqSmsLogin(phone,code)
@@ -127,12 +129,15 @@
           if (!name){
             //用户名不正确
             this.alertShow('用户名不正确')
+            return
           } else if (!pwd){
             //密码不正确
             this.alertShow('密码不正确')
+            return
           } else if (!captcha) {
             //验证码不正确
             this.alertShow('验证码不正确')
+            return
           }
           //发送ajax请求密码登录
           result=await reqLogin({name,pwd,captcha})
@@ -148,14 +153,16 @@
         if (result.code===0){
           const user=result.data
           //将user保存到vuex的state
-
+          this.$store.dispatch('recordUser',user)
           //去个人中心界面
           this.$router.replace('/profile')
+          //this.alertShow('登录成功')
         } else {
           //刷新图片验证码
           this.getCaptcha()
           //显示警告提示
-          this.alertShow(result.msg)
+          const msg=result.msg
+          this.alertShow(msg)
         }
       },
       closeTip(){//关闭提示

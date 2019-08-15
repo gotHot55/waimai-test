@@ -14,9 +14,10 @@ export default {
    mounted () {
      //this.$store.dispatch('getAddress')
      this.getAddress()
+     this.getUserInfo()
   },
   methods:{
-    ...mapActions(['getAddress'])
+    ...mapActions(['getAddress','getUserInfo'])
   }
 }
 </script>
