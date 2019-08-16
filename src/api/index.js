@@ -25,3 +25,10 @@ export const reqSmsLogin = (phone,code) => ajax(BASE_URL+'/login_sms',{phone,cod
 export const reqUserInfo = () => ajax(BASE_URL+'/userinfo')
 // [10、用户登出](#10用户登出)
 export const reqLogout = () => ajax(BASE_URL+'/logout')
+
+//获取商家的goods
+export const reqShopGoods= ()=>ajax('/goods')
+//获取商家的ratings
+export const reqShopRatings= ()=>ajax('/ratings')
+//获取商家的info
+export const reqShopInfo= ()=>ajax('/info')
