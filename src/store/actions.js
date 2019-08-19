@@ -69,11 +69,13 @@ export default {
   },
 
   //异步获取商家商品列表
-  async getShopGoods({commit}){
+  async getShopGoods({commit},callback){
     const result=await reqShopGoods()
     if (result.code===0){
       const goods=result.data
       commit(RECEIVE_GOODS,{goods})
+      //加载完毕
+      callback && callback()
     }
   },
   //异步获取商家评价列表
